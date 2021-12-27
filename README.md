@@ -127,6 +127,10 @@ However, the performance on the hidden dataset has dropped. After further invest
 approaches can be used for mask fusion, the pipeline adopted the Non-Maximum Suppression algorithm
 [4]
 
+
+![image](https://user-images.githubusercontent.com/25413268/147511069-3b186c5c-e918-405e-a607-d1498b525368.png)
+
+
 - The format for each output produced by the model is as follows:
 bbox = [x1, y1, x2, y2], class, confidence
 - As the first step in NMS, the algorithm sorts the boxes in descending confidences.

@@ -183,10 +183,7 @@ on.
 
 [1] https://towardsdatascience.com/instance-segmentation-automatic-nucleus-detection-a169b3a99477
 
-[2] https://books.google.com.ua/books?id=GfILEAAAQBAJ&pg=PA429&lpg=PA429&dq=using+many+mask+r+cnn+for+ma
-sk+better+prediction+pytorch&source=bl&ots=146Kc1rVZD&sig=ACfU3U0Et98OB5QZwCH0AtvsbJugFzeirg&hl=en&s
-a=X&ved=2ahUKEwifjvifhf7zAhUIGuwKHRxyD3UQ6AF6BAgOEAM#v=onepage&q=using%20many%20mask%20r%2
-0cnn%20for%20mask%20better%20prediction%20pytorch&f=false
+[2] https://books.google.com.ua/books?id=GfILEAAAQBAJ&pg=PA429&lpg=PA429&dq=using+many+mask+r+cnn+for+mask+better+prediction+pytorch&source=bl&ots=146Kc1rVZD&sig=ACfU3U0Et98OB5QZwCH0AtvsbJugFzeirg&hl=en&sa=X&ved=2ahUKEwifjvifhf7zAhUIGuwKHRxyD3UQ6AF6BAgOEAM#v=onepage&q=using%20many%20mask%20r%20cnn%20for%20mask%20better%20prediction%20pytorch&f=false
 
 [3] https://arxiv.org/pdf/2012.07177.pdf?fbclid=IwAR1rRzRB2TkN-VsHcSKZc67Adaw830Flg2m1BbPBz66_8F35DuEcHJl2
 G7A

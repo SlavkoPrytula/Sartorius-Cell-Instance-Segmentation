@@ -98,6 +98,8 @@ performance level remained the same and no changes were made.
 
 ### **- Preprocessing**
 
+##### **Mask Correction**
+
 One of the first bottlenecks present in the given dataset is the broken masks. In [0], the approach is
 described to fill the masks manually before training and after each image’s inference. 
 
@@ -113,6 +115,8 @@ border and are therefore not invaded, we can result in the complementary subset 
 
 
 ### **- Postprocessing and Model Ensembling**
+
+##### **NMS of TTA**
 
 This post-processing part aims to combine the output predicted masks and boxes for cells from
 different models into one mask that better represents the actual segmentation. Indeed, since different
@@ -168,6 +172,8 @@ For the time being the model struggles to learn the segmentation for different c
 they are in a large portion of some group. Even after applying the multi-scale short edge augmentation, the
 model has trouble increasing its performance. This causes many false positives in predictions that lower the
 score. The reason for this might be the of lack of additional data.
+
+### **Semi-Supervised**
 
 Thus, one planned solution to be used is to create a semi-supervised training pipeline. The dataset, as already
 mentioned in the very beginning consists of training and validation labeled images. Besides, there are a lot

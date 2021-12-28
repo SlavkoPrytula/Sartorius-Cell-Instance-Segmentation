@@ -99,13 +99,15 @@ performance level remained the same and no changes were made.
 ### **- Preprocessing**
 
 One of the first bottlenecks present in the given dataset is the broken masks. In [0], the approach is
-described to fill the masks manually before training and after each image’s inference. They are invading
-the complementary shapes in input from the outer boundary of the image, using binary dilations. Holes
+described to fill the masks manually before training and after each image’s inference. 
+
+They are invading the complementary shapes in input from the outer boundary of the image, using binary dilations. Holes
 are not connected to the edge and are therefore not invaded. The result is the complementary subset of
 the invaded region. The method used here is based on invading the complementary shapes in input from
 the outer boundary of the image, using binary dilations. Because the holes are not connected to the
 border and are therefore not invaded, we can result in the complementary subset of the invaded region.
-Here you can observe the problem of unfilled masks and the processed version of them.
+
+- Here you can observe the problem of unfilled masks and the processed version of them.
 
 ![image](https://user-images.githubusercontent.com/25413268/147510674-2c341724-dfd3-4a32-a1f7-c0d06c855a46.png)
 

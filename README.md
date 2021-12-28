@@ -122,6 +122,7 @@ First and foremost, it has been discovered that all three cell classes have diff
 initial cells in general. Therefore, the minimum number of pixels for each category was introduced by
 three thresholdsd. This has drastically changed the result for better. However, for different models, these
 thresholds are different. Indeed, in almost every situation, the performance of the models
+
 The TTA with horizontal and vertical flips on inference has been used for the baseline approach.
 However, the performance on the hidden dataset has dropped. After further investigation of that
 approaches can be used for mask fusion, the pipeline adopted the Non-Maximum Suppression algorithm
@@ -165,11 +166,14 @@ For the time being the model struggles to learn the segmentation for different c
 they are in a large portion of some group. Even after applying the multi-scale short edge augmentation, the
 model has trouble increasing its performance. This causes many false positives in predictions that lower the
 score. The reason for this might be the of lack of additional data.
+
 Thus, one planned solution to be used is to create a semi-supervised training pipeline. The dataset, as already
 mentioned in the very beginning consists of training and validation labeled images. Besides, there are a lot
 (~2000) unlabeled data photos that can be used. The idea is to have the best ensembling of models to produce
 the predicted masks for the unlabeled data. After, we can merge the already used and the new data into one
-large set. Therefore, such an increase in labeled images is expected to create a more robust model to predict
+large set. 
+
+Therefore, such an increase in labeled images is expected to create a more robust model to predict
 on.
 
 

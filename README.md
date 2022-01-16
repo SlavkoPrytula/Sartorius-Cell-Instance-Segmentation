@@ -3,18 +3,117 @@
 # **Setup:**
 
 ## **Install**
-
+ ```sh
+ git clone https://github.com/SlavkoPrytula/Sartorius-Cell-Instance-Segmentation
+ ```
 
 ## **Download Dataset**
 
-`
+```sh
 !kaggle competitions download -c sartorius-cell-instance-segmentation
-`
+```
+
+Build the directory structure
+/dataset
+  |- /LIVECell_dataset_2021
+  |- /test
+  |- /train
+  |- /train_semi_supervised
+  |- /train.csv
 
 ## **Training**
 
+In the notebook `detectron2_training.ipynb` specify the pathes to the following folders
+
+```python
+from detectron2.data.datasets import register_coco_instances
+
+Data_Resister_training="sartorius_Cell_train";
+Data_Resister_valid="sartorius_Cell_valid";
+
+dataDir=Path("/content/drive/MyDrive/ML_Lab/Kaggle/Cell-Instance-Segmentation/Coco-Dataset/(shared) Sartorius - Cell Instance Segmentation/semi-supervised")
+dataDir=Path("/content/drive/MyDrive/ML_Lab/Kaggle/Cell-Instance-Segmentation/Data")
+
+DatasetCatalog.clear()
+MetadataCatalog.clear()
+ 
+# raw train and validation data
+register_coco_instances(Data_Resister_training,{}, "/content/drive/MyDrive/ML_Lab/Kaggle/Cell-Instance-Segmentation/Coco-Dataset/5Fold/coco_cell_train_fold5.json", dataDir)
+register_coco_instances(Data_Resister_valid,{}, "/content/drive/MyDrive/ML_Lab/Kaggle/Cell-Instance-Segmentation/Coco-Dataset/5Fold/coco_cell_valid_fold5.json", dataDir)
+```
+
+Specify the model / load pretrained weights. Register the dataset
+
+```python
+config_name = "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"
+
+cfg.merge_from_file(model_zoo.get_config_file(config_name))
+cfg.DATASETS.TRAIN = (Data_Resister_training,)
+cfg.DATASETS.TEST = (Data_Resister_valid,)
+
+cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(config_name)
+```
+
+Tune the hyperparameter for the model. From testing these were found to perform well
+
+```python
+cfg.DATALOADER.NUM_WORKERS = 4
+cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = 3 
+cfg.SOLVER.IMS_PER_BATCH = 2 
+cfg.INPUT.MASK_FORMAT='bitmask'
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
+
+
+cfg.SOLVER.LR_SCHEDULER_NAME = "WarmupMultiStepLR"
+cfg.SOLVER.BASE_LR = 0.0005
+    
+cfg.SOLVER.WARMUP_ITERS = 400 
+cfg.SOLVER.MAX_ITER = 40000 
+cfg.SOLVER.STEPS = (8000, 16000) 
+cfg.TEST.EVAL_PERIOD = len(DatasetCatalog.get('sartorius_Cell_train'))
+cfg.SOLVER.CHECKPOINT_PERIOD = cfg.TEST.EVAL_PERIOD
+
+
+cfg.MODEL.LOSS_TYPE = "diou"  # distance loss for bbox
+```
+
+Specify the training type
+
+```python
+trainer = Trainer(cfg)  # without data augmentation
+# trainer = AugTrainer(cfg)  # with  data augmentation  
+trainer.resume_or_load(resume=False)
+trainer.train()
+```
+
 
 ## **Inference**
+
+Run `detectron2-inference.ipynb`, `ensemble-tta-nms-detectron2-inference.ipynb` notebooks and specify your models
+
+- `detectron2-inference.ipynb`
+
+```python
+cfg.MODEL.WEIGHTS = "../input/sartoriousresnet50/model_0008953-DE10k-Au9k-1fold-0.2738.pth"
+
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = 3 
+cfg.TEST.DETECTIONS_PER_IMAGE = 1000
+predictor = DefaultPredictor(cfg)
+THRESHOLDS = [.15, .35, .55]
+MIN_PIXELS = [75, 150, 75]
+```
+
+
+- `ensemble-tta-nms-detectron2-inference.ipynb`
+
+```python
+best_model=(
+    {'file': '../input/sartoriousresnet50/Z_model_273.pth', 'config_name': 'COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml', 'LB score': 0.308, 'ths': [.15, .35, .55]},
+    {'file': '../input/sartoriousresnet50/model_0011999-aug-0.290.pth', 'config_name': "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml", 'LB score': 0.306, 'ths': [.15, .35, .55]},
+           )
+```
+
 
 ----
 ----

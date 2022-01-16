@@ -256,9 +256,9 @@ Below you can see the table with a few good experiments.
 | **Cascade MaskRCNN_X152_32x8d_FPN (trained on original masks)**     | 0.305       | 0.312      |
 | **MaskRCNN-R50FPN (trained on filled masks)**     | 0.306      | 0.316      |
 | **MaskRCNN-R50FPN (trained on original masks)**     | 0.308       | 0.316      |
-| **Semi-Supervised Training**     | 0.306       | 0.316      |
+| **Pseudo Labeling**     | 0.306       | 0.316      |
 | **MaskRCNN-R50FPN (trained on original masks) + MaskRCNN-R50FPN (trained on filled masks) + TTA + NMS**     | 0.310       | 0.320      |
-| **Semi-Supervised Training + MaskRCNN-R50FPN(trained on original masks) + TTA + NMS**     | 0.308       | 0.320      |
+| **Pseudo Labeling + MaskRCNN-R50FPN(trained on original masks) + TTA + NMS**     | 0.308       | 0.320      |
 
 
 The final standing put me in the top 10% of the competition (143/1505)

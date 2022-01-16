@@ -14,12 +14,14 @@
 ```
 
 Build the directory structure
+```
 /dataset
-  |- /LIVECell_dataset_2021
-  |- /test
-  |- /train
-  |- /train_semi_supervised
-  |- /train.csv
+   ├── /LIVECell_dataset_2021                  
+   ├── /test                  
+   ├── /train                  
+   ├── /train_semi_supervised                  
+   └── /train.csv
+```
 
 ## **Training**
 

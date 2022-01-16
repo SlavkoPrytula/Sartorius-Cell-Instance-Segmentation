@@ -350,7 +350,7 @@ Below you can see the table with a few good experiments.
 
 
 
-| Runs | Pulic Test Data | Private Test Data |
+| Runs | Pulic Test Data (mAP IoU) | Private Test Data (mAP IoU) |
 | :---         |     :---:      |          :---: |
 | **PyTorch Resnet50 Baseline**   | 0.273     | 0.281    |
 | **MaskRCNN-C4101FPN (trained on original masks)**     | 0.303       | 0.310      |

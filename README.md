@@ -1,5 +1,26 @@
 # Sartorius - Cell-Instance-Segmentation
 
+# **Setup:**
+
+## **Install**
+
+
+## **Download Dataset**
+
+`
+!kaggle competitions download -c sartorius-cell-instance-segmentation
+`
+
+## **Training**
+
+
+## **Inference**
+
+----
+----
+
+
+**For full training loss and accuracy metrics please refer to this link - [Metrics](https://wandb.ai/slavko_prytula/sartorius?workspace=user-slavko_prytula)**
 
 # **Introduction:**
 
@@ -127,7 +148,17 @@ augmentations), their ensembling can produce better results.
 First and foremost, it has been discovered that all three cell classes have different shapes of their
 initial cells in general. Therefore, the minimum number of pixels for each category was introduced by
 three thresholdsd. This has drastically changed the result for better. However, for different models, these
-thresholds are different. Indeed, in almost every situation, the performance of the models
+thresholds are different. Indeed, in almost every situation, the performance of the models have increased.
+
+On the plot bellow you can observe different thresholds applied to each class and the cv(local) score produced by the model. The model at that time had `0.296` mAP score. However, the same thresholds produced similar impovement for almost every model.
+
+![image](https://user-images.githubusercontent.com/25413268/149669027-ad67bf4b-c625-4d5e-afaa-b9029fdfdfa6.png)
+
+
+| Runs | w/o applied threshold by class | w/ applied threshold by class |
+| :---         |     :---:      |          :---: |
+| **Resnet50 (trained on original masks)**   | 0.296     | 0.304    |
+
 
 The TTA with horizontal and vertical flips on inference has been used for the baseline approach.
 However, the performance on the hidden dataset has dropped. After further investigation of that
@@ -162,7 +193,7 @@ picture is the same situation, but the ensembling flow has been applied
 ![image](https://user-images.githubusercontent.com/25413268/147510713-c39c2881-27a5-4fde-a88c-c2e5dde5e08f.png)
 
 
-As the result the overall score has increased from 0.307 up to 0.310
+As the result the overall score has increased from 0.308 up to 0.310
 
 
 # **Further work:**
@@ -175,14 +206,73 @@ score. The reason for this might be the of lack of additional data.
 
 ### **Semi-Supervised**
 
-Thus, one planned solution to be used is to create a semi-supervised training pipeline. The dataset, as already
-mentioned in the very beginning consists of training and validation labeled images. Besides, there are a lot
-(~2000) unlabeled data photos that can be used. The idea is to have the best ensembling of models to produce
-the predicted masks for the unlabeled data. After, we can merge the already used and the new data into one
-large set. 
+In our dataset, we also have “semi-supervised” images. These images represent our training classes respectively. However, they are not labeled. Meaning that there are no annotated data present for any cells.
 
-Therefore, such an increase in labeled images is expected to create a more robust model to predict
-on.
+From the very definition that semi-supervised training “is an approach that involves a small portion of labeled examples and a large number of unlabeled examples from which a model must learn and make predictions on new examples” we can build a better dataset. Thus the hypothesis for such training was that having predicted labeled annotation of these images we can add them to the already existing dataset. After, we perform a new satisfied kfold split and retrain the model again. This way we end up with a much bigger representation sample of our data and can train a more robust model. 
+
+For the prediction, the combination of two models + tta + nms was used (previous LB score on hidden test showed the 0.310 mAP). Below you can see the prediction such pipeline has made. Overall the annotations do not look bad. Indeed some of them are perfect. However, there still remained a problem with the imbalanced classes.
+
+![image](https://user-images.githubusercontent.com/25413268/149668413-7d979401-e9c1-4d3a-b686-b62be1edbf7f.png)
+
+
+After predicting all annotations and mergin the train and semi-supervised image folders the annotations were transformed to a csv file with respective content as the training data and concatinated (randomly sampled) with it. In the last step the same kfold splitting technique was performed on the new data.
+
+##### **Results**
+
+The mAP reached the alltime high 0.355 compared to 0.277 on the raw data
+
+
+![image](https://user-images.githubusercontent.com/25413268/149668464-01e1e69e-162a-4ea7-90ef-058a5f8dd1d2.png)
+
+
+
+This phenomena can be explained by the quality of the predicted masks on the unannotated images. The shsy5y and cort classes have bigger masks in the set. Thus for semi-supervised data such predictions may have been unstable.As the final result, the models have been evaluated on the whole competition’s hidden dataset. The overall results have increased drastically. This boost was due to the fact that in the training pipeline we only had a small portion of astro and cort instances. Thus the increase in their count gave this performance.
+
+
+Below you can see the table with a few good experiments. 
+
+
+
+Unfortunately the final results did not improve the test set score. It seems that predicted masks were not accurate. Indeed, the test set requires the masks to be more precise on one hand.
+
+
+
+----
+
+# **Results**
+
+As the final result, the models have been evaluated on the whole competition’s hidden dataset. The overall results have increased drastically. This boost was due to the fact that in the training pipeline we only had a small portion of astro and cort instances. Thus the increase in their count gave this performance.
+
+
+Below you can see the table with a few good experiments. 
+
+
+
+
+| Runs | Pulic Test Data | Private Test Data |
+| :---         |     :---:      |          :---: |
+| **PyTorch Resnet50 Baseline**   | 0.273     | 0.281    |
+| **Resnet101 (trained on original masks)**     | 0.303       | 0.310      |
+| **Cascade-RCNN152 (trained on original masks)**     | 0.305       | 0.312      |
+| **Resnet50 (trained on filled masks)**     | 0.306      | 0.316      |
+| **Resnet50 (trained on original masks)**     | 0.308       | 0.316      |
+| **Semi-Supervised Training**     | 0.306       | 0.316      |
+| **Resnet50 (trained on original masks) + Resnet50 (trained on filled masks) + TTA + NMS**     | 0.310       | 0.320      |
+| **Semi-Supervised Training + Resnet50(trained on original masks) + TTA + NMS**     | 0.308       | 0.320      |
+
+
+The final standing put me in the top 10% of the competition (143/1505)
+
+----
+
+# **Room for Impovement:**
+
+Current pipleine is pretty robust. However, there ase some good techniquens that are yet to be explored.
+
+- Pretraining the models using the LIVECall data. This might impove the performance due tot the act the the data consists on 8 classes of cells. This way the model can learn features such as shape, realative position, etc. on early stages
+- Using YOLO for detecting cells. 
+  - One of the bottle neck that still exist is that the current model cant hande finding all the individuall cells  correcly. This is where YOLO(v5 of X) might come in handy. We can train the model to produce the bouning box positions and then in each predicted bbox we segment the cell.
+- WBF - weighted box fusion. Can be used to YOLO and Detectron bbox fustion predictions.
 
 
 # **References:**
